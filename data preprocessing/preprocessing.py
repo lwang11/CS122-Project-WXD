@@ -1,15 +1,12 @@
 import json
 from pprint import pprint
 import nltk
-import matplotlib.pyplot as plt
 import math
 import string
 from nltk.corpus import stopwords
 from nltk.stem.porter import *
 import csv
 import pickle
-from sklearn import svm
-from sklearn import preprocessing
 import operator
 from collections import OrderedDict
 
@@ -95,16 +92,16 @@ json_filename = 'full_format_recipes.json'
 name_doc_length = 'doc_length'
 
 
-# index_in_json, documents, word_set = read_and_preprocessing(json_filename, num_attribute, is_lower_case, is_stem,is_remove_stopwords, is_remove_puctuation, stemmer)
-# save_func(name_documents, documents)
-# save_func(name_index_in_json, index_in_json)
-# save_func(name_word_set, word_set)
+index_in_json, documents, word_set = read_and_preprocessing(json_filename, num_attribute, is_lower_case, is_stem,is_remove_stopwords, is_remove_puctuation, stemmer)
+save_func(name_documents, documents)
+save_func(name_index_in_json, index_in_json)
+save_func(name_word_set, word_set)
 
-load_documents = load_func(name_documents)
-load_index_in_json = load_func(name_index_in_json)
-load_word_set = load_func(name_word_set)
+# load_documents = load_func(name_documents)
+# load_index_in_json = load_func(name_index_in_json)
+# load_word_set = load_func(name_word_set)
 
-print(len(load_documents))
+print(len(documents))
 
 
 
