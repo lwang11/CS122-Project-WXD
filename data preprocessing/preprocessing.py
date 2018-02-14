@@ -2,39 +2,39 @@ import json
 import nltk
 import math
 import string
-from nltk.corpus import stopwords 
-from nltk.stem.porter import *
+from nltk.corpus import stopwords
+from nltk.stem.porter import * 
 import pickle # save and load data
 from collections import OrderedDict # dict library
 
 def read_and_preprocessing(json_filename, num_attribute, is_lower_case, is_stem,is_remove_stopwords, is_remove_puctuation, stemmer):
-	'''
-	inputs: jason_filename: data
-	num_attribute: set to 11 at the end to include recipe w/ 11 attributes (title, ingredients, etc.) 
-	is_lower_case: flag, logical
-	is_stem,is_remove_stopwords: flag, logical
-	is_remove_puctuation: flag, logical
-	stemmer: an object for stemming, returned from PorterStemmer, which is a function in nltk.stem.Porter
-	'''
-    data = json.load(open(json_filename))
-    documents = [] # initialize a list of doc, each entry is one recipe's ingredients with stemmed key words 
-    index_in_json = [] # record the index of selected recipes in json file 
+    '''
+    inputs: jason_filename: data
+    num_attribute: set to 11 at the end to include recipe w/ 11 attributes (title, ingredients, etc.)
+    is_lower_case: flag, logical
+    is_stem,is_remove_stopwords: flag, logical
+    is_remove_puctuation: flag, logical
+    stemmer: an object for stemming, returned from PorterStemmer, which is a function in nltk.stem.Porter
+    '''
+    data = json.load(open(json_filename)) # a list of recipes
+    documents = [] # initialize a list (of list), each entry is one recipe's ingredients with stemmed key words
+    index_in_json = [] # record the index of selected recipes in json file
     title_set = set() # a set of recipe titles (string), in case there are duplicated recipes in json file
     word_set = set() # a set of word of ingredients
     cnt = 0 # count
     len_data = str(len(data)) # number of recipes in json file
 
-    for i in range(0, len(data)): # iterate through recipe
+    for i in range(0, len(data)): # iterate through recipes
         if len(data[i]) == num_attribute and len(data[i]['ingredients']) != 0: # select recipes that have 11 attibutes and non-zero ingredients
-            if data[i]['title'] not in title_set: 
-                print(str(i) + '/' + len_data)
+            if data[i]['title'] not in title_set: # there are repeated recipes
+                # print(str(i) + '/' + len_data)
                 title_set.add(data[i]['title']) # add current recipe title into title_set
                 index_in_json.append(i) # record index of current recipe, a list
-                ingredients = data[i]['ingredients'] # get ingredient (a list of string)
+                ingredients = data[i]['ingredients'] # get ingredient (a list of strings)
 
                 # data preprocessing starts:
                 actual_ingredients = [] # list of preprocessed ingredient words
-                for each_ingredient in ingredients: # iterate through ingredients (list of string)
+                for each_ingredient in ingredients: # iterate through ingredients (a list of strings), each ingredients is one string
                     if is_lower_case:
                         each_ingredient = each_ingredient.lower()
 
@@ -44,9 +44,10 @@ def read_and_preprocessing(json_filename, num_attribute, is_lower_case, is_stem,
                         singles = [stemmer.stem(token) for token in tokens] # stemming token
 
                     if is_remove_stopwords:
-                        filtered_words = [word for word in singles if word not in stopwords.words('english')] 
+                        filtered_words = [word for word in singles if word not in stopwords.words('english')]
                     else:
                         filtered_words = singles
+
                     filtered_words_2 = []
                     if is_remove_puctuation:
                         for word in filtered_words:
@@ -105,10 +106,10 @@ load_index_in_json = load_func(name_index_in_json)
 load_word_set = load_func(name_word_set)
 
 print(load_documents)
-
-# next: 1.remove costomize stop words 
-# 2. construct inverted index generated base on documents (dict with each key being actual_ingredients): egg--index1, num1; index2,num2 
-# 3. given query, use cosine similarity  
+print(load_index_in_json)
+print(load_word_set)
 
 
-
+# next: 1.remove costomized stop words
+# 2. construct inverted index generated base on documents (dict with each key being actual_ingredients): {egg: [（index1, num1）, (index2,num2)...], tomato....
+# 3. vector space model
