@@ -1,7 +1,6 @@
 import json
-from pprint import pprint
 import nltk
-
+import pprint
 import math
 import string
 from nltk.corpus import stopwords
@@ -199,10 +198,12 @@ def get_data(json_filename, top_n, doc_index, documents):
         index = load_index_in_json[doc_index[i]]
         to_print['title'] = data[index]['title']
         to_print['ingredients'] = documents[doc_index[i]]
+        to_print['directions'] = data[index]['directions']
         # data[index]['ingredients']
 
         print('title: ' + data[index]['title'] + ' ' + str(len(documents[doc_index[i]])))
         print(documents[doc_index[i]])
+        print(data[index]['directions'])
         print('------------------------------------------')
 
 
@@ -238,41 +239,40 @@ customized_stopwords = {"spoon", "cups", "large",
     "teaspoon", "medium", "small", "Freshly", "sheets", "pound",
     "tablespoon", "ounce", "lb"}
 
-index_in_json, documents, word_set = read_and_preprocessing(json_filename, num_attribute, is_lower_case, is_stem,is_remove_stopwords, is_remove_puctuation, stemmer, customized_stopwords)
+# index_in_json, documents, word_set = read_and_preprocessing(json_filename, num_attribute, is_lower_case, is_stem,is_remove_stopwords, is_remove_puctuation, stemmer, customized_stopwords)
 
-save_func(name_documents, documents)
-save_func(name_index_in_json, index_in_json)
-save_func(name_word_set, word_set)
+# save_func(name_documents, documents)
+# save_func(name_index_in_json, index_in_json)
+# save_func(name_word_set, word_set)
+
 #
-# load_documents = load_func(name_documents)
-# load_index_in_json = load_func(name_index_in_json)
-# load_word_set = load_func(name_word_set)
+load_documents = load_func(name_documents)
+load_index_in_json = load_func(name_index_in_json)
+load_word_set = load_func(name_word_set)
 #
 #
-# # inverted_index = generate_inverted_index(load_index_in_json, load_documents, load_word_set)
-# # save_func(name_inverted_index, inverted_index)
-# load_inverted_index = load_func(name_inverted_index)
+# inverted_index = generate_inverted_index(load_index_in_json, load_documents, load_word_set)
+# save_func(name_inverted_index, inverted_index)
+load_inverted_index = load_func(name_inverted_index)
 #
-# # doc_length = get_document_length(load_index_in_json, load_documents, load_inverted_index)
-# # save_func(name_doc_length, doc_length)
-# load_doc_length = load_func(name_doc_length)
+# doc_length = get_document_length(load_index_in_json, load_documents, load_inverted_index)
+# save_func(name_doc_length, doc_length)
+load_doc_length = load_func(name_doc_length)
 #
-# query = 'potato, beef'
+query = 'potato, beef' #input query
 #
-# doc_rank = doc_ranking(query, load_index_in_json, load_documents, load_inverted_index, load_doc_length)
-# sorted_doc_rank = sorted(doc_rank.items(), key=operator.itemgetter(1), reverse=True)
-# # pprint(sorted_doc_rank[0:8])
-# # data = json.load(open(json_filename))
-# # for i in range(0, 5):
-# #     index = load_index_in_json[sorted_doc_rank[i][0]]
-# #     pprint(data[index])
+doc_rank = doc_ranking(query, load_index_in_json, load_documents, load_inverted_index, load_doc_length)
+sorted_doc_rank = sorted(doc_rank.items(), key=operator.itemgetter(1), reverse=True)
+# print(sorted_doc_rank[0:10])
+# data = json.load(open(json_filename))
+# for i in range(0, 5):
+    # index = load_index_in_json[sorted_doc_rank[i][0]]
+    # print(data[index])
 #
-# # without_food = 'olive oil'
-# # without_food = ''
-# without_food = 'mushroom'
-# filtered_doc_index = delete_food(sorted_doc_rank, load_documents, without_food)
-# # print(filtered_doc_index[0:5])
-# top_n = 5
-# get_data(json_filename, top_n, filtered_doc_index, load_documents)
+without_food = 'mushroom' # take out unwanted ingredient here
+filtered_doc_index = delete_food(sorted_doc_rank, load_documents, without_food)
+# print(filtered_doc_index[0:5])
+top_n = 5
+get_data(json_filename, top_n, filtered_doc_index, load_documents)
 #
 # #
