@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Recipe Search</title>
+        <link rel="stylesheet" type="text/css" href="{% static "search/main.css" %}" />
+    </head>
+    <body>
+        <div id="header">
+            <h1>Recipe Search</h1>
+        </div>
+        <div class="frame">
+            <form method="get">
+                {% csrf_token %}
+                <table class="form">
+                {{ form }}
+                </table>
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+
+        
+       
+               <div> You search for: {{food_query}}</div>               
+                {% if result %}
+                <div>Result: {{ result }}</div>  
+                {% endif %} 
+     
+    </body>
+</html>
