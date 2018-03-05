@@ -199,7 +199,7 @@ def get_data(json_filename, top_n, doc_index, documents):
         #to_print['directions'] = data[index]['directions']
 
         
-        a = data[index]['title'] + ':    ' + data[index]['directions'][0]
+        a = data[index]['title'] + ':    ' + str(data[index]['directions'])[2:-2]
         #s += '\n'
         #s += str(documents[doc_index[i]])
         #s += '\n'
