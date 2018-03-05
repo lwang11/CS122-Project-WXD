@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Recipe Search</title>
+        <link rel="stylesheet" type="text/css" href="{% static "main.css" %}" />
+        <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
+    </head>
+    <body>
+        <div id="header">
+            <h1>Recipe Search</h1>
+        </div>
+        <div class="frame">
+            <form method="get">
+                {% csrf_token %}
+                <table class="form">
+                {{ form }}
+                </table>
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+
+        
+       
+               <div class="query"> You are searching for recipes with {{food_query}}</div>        
+                        {% if result %}
+                        <table class="recipe">
+                            {% for col in result %}
+                    <tr>
+
+                        <td>{{ col }}</td>
+
+                    </tr>
+                    {% endfor %}
+              
+                    
+                    
+                    
+                
+
+                
+                {% endif %}
+     
+    </body>
+</html>

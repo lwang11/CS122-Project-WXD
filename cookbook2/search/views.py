@@ -40,7 +40,7 @@ def home(request):
 
     else:
         form = SearchForm()
-    return render(request, 'search/index.html', {'form': form})
+        return render(request, 'search/index.html', {'form': form})
 
     
     
