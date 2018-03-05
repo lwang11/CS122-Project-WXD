@@ -11,6 +11,7 @@ import uuid
 import sys
 from urllib.request import urlopen, Request
 
+
 from bs4 import BeautifulSoup
 
 
@@ -48,49 +49,12 @@ def extract_images(query, num_images):
     soup = get_soup(url, REQUEST_HEADER)
     logger.info("Extracting image urls")
     link_type_records = extract_images_from_soup(soup)
-    return itertools.islice(link_type_records, num_images)
+    return list(itertools.islice(link_type_records, 1))[0][0]
 
 def get_raw_image(url):
     request = Request(url, headers=REQUEST_HEADER)
     response = urlopen(request)
     return response.read()
 
-def save_image(raw_image, image_type, save_directory):
-    extension = image_type if image_type else 'jpg'
-    file_name = uuid.uuid4().hex
-    save_path = os.path.join(save_directory, file_name)
-    with open(save_path, 'wb') as image_file:
-        image_file.write(raw_image)
 
-def download_images_to_dir(images, save_directory, num_images):
-    for i, (url, image_type) in enumerate(images):
-        try:
-            logger.info("Making request (%d/%d): %s", i, num_images, url)
-            raw_image = get_raw_image(url)
-            save_image(raw_image, image_type, save_directory)
-        except Exception as ex:
-            logger.exception(ex)            
-
-def run(query, save_directory, num_images=1):
-    query = '+'.join(query.split())
-    logger.info("Extracting image links")
-    images = extract_images(query, num_images)
-    logger.info("Downloading images")
-    download_images_to_dir(images, save_directory, num_images)
-    logger.info("Finished")
-
-
-def get_title(json_filename):
-    data = json.load(open(json_filename))
-    title_set = set()
-    for i in range(0, len(data)):
-        d = data[i]
-        if 'title' in d.keys():           
-            title_set.add(d['title'])
-    return title_set
-
-title_set = get_title("full_format_recipes.json")
-
-for i in title_set:
-    run(i,'/Users/yangyangdai/desktop/food pic',1)  
 

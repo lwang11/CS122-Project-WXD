@@ -12,6 +12,7 @@ from django.shortcuts import render
 from django import forms
 
 from recipe import *
+from Scrapeimage import *
 
 NOPREF_STR = 'No preference'
 RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
@@ -31,18 +32,29 @@ class SearchForm(forms.Form):
 def home(request):
     result=None
     food_query = None
+    img_url = None
+    res = None
     if request.method == 'GET':
         form = SearchForm(request.GET)
         if form.is_valid():
             food_query = form.cleaned_data['query']
             without = form.cleaned_data['without_food']
+
             result = find_recipe('full_format_recipes.json', food_query, 5, without,
                                  load_index_in_json, load_documents, load_inverted_index, load_doc_length)
+           
+
+            res = []
+            for i in result:
+                img_url = extract_images(i[0], 1)
+                res.append((i, img_url))
 
            
     else:
         form = SearchForm()
-    return render(request, 'search/index.html', {'form': form,"result": result, "food_query": food_query})
+    
+    return render(request, 'search/index.html', {'form': form,"result": result, "food_query": food_query, 
+                                                 'res': res})
 
 
 

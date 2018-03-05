@@ -190,19 +190,23 @@ def delete_food(sorted_doc_rank, documents, without_food):
 
 def get_data(json_filename, top_n, doc_index, documents):
     data = json.load(open(json_filename))
-    #to_print ={}
+    to_print ={}
     s=[]
     for i in range(0, top_n):
+        a = []
         index = load_index_in_json[doc_index[i]]
-        #to_print['title'] = data[index]['title']
+        to_print['title'] = data[index]['title']
         #to_print['ingredients'] = documents[doc_index[i]]
-        #to_print['directions'] = data[index]['directions']
+        to_print['directions'] = data[index]['directions']
 
         
-        a = data[index]['title'] + ':    ' + str(data[index]['directions'])[2:-2]
+        #a = data[index]['title'] + '\n' + str(data[index]['directions'])[2:-2]
         #s += '\n'
         #s += str(documents[doc_index[i]])
         #s += '\n'
+
+        a.append(to_print['title'][0:-1])
+        a.append(to_print['directions'])
         s.append(a)
         #s += '\n'
 
