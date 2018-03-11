@@ -19,6 +19,7 @@ To run the project:
 2.	Go to “Cookbook” folder, run:
 python3 manage.py runserver
 3.	Go to 127.0.0.1:8000/search/
+4.  If you want to use a different model, go to views.py in cookbook/search/views.py, change "from BM25 import *" to "from Vector_space import *"
 
 Responsibilities:
 1.	Data Preprocessing: Wenxi Xiao 
