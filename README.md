@@ -9,6 +9,7 @@ Scripts in our project:
 3.	Scrapeimage.py, a python file scraping image from google
 
 Files in our project:
+
 All results are saved to shorten running time.
 1.	For Vector_space.py, doc_length, documents, index_in_json, inverted_index, word_set are saved
 2.	For BM25.py, doc_length_BM25, documents_BM25, index_in_json_BM25, inverted_index_BM25, word_set_BM25 are saved
