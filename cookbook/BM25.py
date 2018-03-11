@@ -194,7 +194,7 @@ def get_data(json_filename, top_n, doc_index, documents):
         a.append(c)
         b = ''
         for i in range(len(data[index]['directions'])):
-            b += data[index]['directions'][i] + " "
+            b += str(i + 1) + ". " + data[index]['directions'][i] + "\r\t"
         a.append(b)
         s.append(a)
     return s

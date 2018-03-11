@@ -51,7 +51,7 @@ def extract_images(query, num_images):
     soup = get_soup(url, REQUEST_HEADER)
     logger.info("Extracting image urls")
     link_type_records = extract_images_from_soup(soup)
-    return list(itertools.islice(link_type_records, 1))[0][0]
+    return list(itertools.islice(link_type_records, 2))[1][0]
 
 def get_raw_image(url):
     request = Request(url, headers=REQUEST_HEADER)

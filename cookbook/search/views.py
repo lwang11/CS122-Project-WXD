@@ -11,7 +11,7 @@ from operator import and_
 from django.shortcuts import render
 from django import forms
 
-from project_BM25 import *
+from BM25 import *
 from Scrapeimage import *
 
 NOPREF_STR = 'No preference'

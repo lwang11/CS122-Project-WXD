@@ -8,9 +8,9 @@ html, body {
 div.header {
     background: #F0F8FF;
     padding: 5px;
-    position: fixed; /* Set the navbar to fixed position */
-    top: 0; /* Position the navbar at the top of the page */
-    width: 100%; /* Full width */
+    position: fixed; 
+    top: 0; 
+    width: 100%;
 }
 
 div.header h1 {
