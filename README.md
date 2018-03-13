@@ -11,6 +11,8 @@ In the cookbook folder:
 2.	BM25.py, a python file containing data preprocessing and probabilistic BM-25 model construction
 3.	Scrapeimage.py, a python file scraping image from google
 
+Note: data preprocessing has already been added to Vector_space.py and BM25.py
+
 In the evaluation folder:
 
 1. project.py, a python file that evaluates vector space model and BM25 model based on normalized discounted cumulative gain score.
@@ -39,10 +41,10 @@ word_set_tfidf_removed_stop_words
 
 ## To run the project:
 
-1.	Install pip in your terminal (if have not done so)
-2. To run the project using Django user interface: $ pip install Django
-3.	Go to “cookbook” folder, run: $ python3 manage.py runserver
-4.	Go to 127.0.0.1:8000/search/
+1.  Install pip in your terminal (if have not done so)
+2.  To run the project using Django user interface: $ pip install Django
+3.  Go to “cookbook” folder, run: $ python3 manage.py runserver
+4.  Go to 127.0.0.1:8000/search/
 5.  If you want to use a different model, go to views.py in cookbook/search/views.py, change "from BM25 import * " to "from Vector_space import * "
 
 
