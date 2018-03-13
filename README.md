@@ -40,9 +40,8 @@ word_set_tfidf_removed_stop_words
 ## To run the project:
 
 1.	Install pip in your terminal (if have not done so)
-2. To run the project using Django user interface: $ sudo pip3 install django
-3.	Go to “Cookbook” folder, run:
-python3 manage.py runserver
+2. To run the project using Django user interface: $ pip install Django
+3.	Go to “cookbook” folder, run: $ python3 manage.py runserver
 4.	Go to 127.0.0.1:8000/search/
 5.  If you want to use a different model, go to views.py in cookbook/search/views.py, change "from BM25 import * " to "from Vector_space import * "
 
