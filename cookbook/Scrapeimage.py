@@ -69,9 +69,10 @@ def extract_images(query):
     soup = get_soup(url, REQUEST_HEADER)
     logger.info("Extracting image urls")
     link_type_records = extract_images_from_soup(soup)
-    # we tried some queries, and we found that the first image is 
-    # sometimes  not related to food, such as vanilla snow, which is
-    # also a song, so we scrape the second image of each recipe
+
+    # we tried many different queries, and we found that the first image is 
+    # sometimes not related to food, such as vanilla snow, which is
+    # also a song, so we decide to scrape the second image of each recipe
     return list(itertools.islice(link_type_records, 2))[1][0]
 
 
