@@ -274,25 +274,25 @@ def get_data(json_filename, top_n, doc_index, documents):
         doc_index: index information
         documents: preprocessed recipe ingredients
     outputs:
-        s: vector saves recipes info
+        s: saves recipes info into a list
     '''
 
     data = json.load(open(json_filename))
     s=[]
     for i in range(0, top_n):
-        a = []
+        recipe_info = []
         index = load_index_in_json[doc_index[i]]
-        a.append(data[index]['title'][0:-1])
-        c = ''
+        recipe_info.append(data[index]['title'][0:-1])
+        ingred = ''
         for i in range(len(data[index]['ingredients'])):
-            c += data[index]['ingredients'][i] + ", "
+            ingred += data[index]['ingredients'][i] + ", "
 
-        a.append(c)
-        b = ''
+        recipe_info.append(ingred)
+        direct = ''
         for i in range(len(data[index]['directions'])):
-            b += data[index]['directions'][i] + " "
-        a.append(b)
-        s.append(a)
+            direct += str(i + 1) + ". " + data[index]['directions'][i] + " "
+        recipe_info.append(direct)
+        s.append(recipe_info)
     return s
 
 
