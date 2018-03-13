@@ -25,6 +25,7 @@ Responsibilities:
 1.	Data Preprocessing: Wenxi Xiao 
 2.	Build models and algorithms: Lerong Wang, Wenxi Xiao, Yangyang Dai
 3.	Django user interface: Lerong Wang, Yangyang Dai
+4.  Model Evaluation: Wenxi Xiao
 
 Documentation of Code Ownership:
 
