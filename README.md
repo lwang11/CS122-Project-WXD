@@ -1,5 +1,5 @@
-# CS122-Project-
-CS122 2018 Group Project
+# CAPP30122-Project-
+CAPP30122 2018 Group Project By WXD
 
 Data downloaded from https://www.kaggle.com/hugodarwood/epirecipes/data
 
