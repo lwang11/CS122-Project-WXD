@@ -1,5 +1,9 @@
+## Original, model learned from https://en.wikipedia.org/wiki/Okapi_BM25.
+## This file contains code for constructing the BM25 model for document 
+## ranking and returns ranked recipes for a given query.
+
+
 import json
-from pprint import pprint
 import nltk
 import matplotlib.pyplot as plt
 import math
@@ -8,13 +12,33 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import *
 import csv
 import pickle
-from sklearn import svm
 from sklearn import preprocessing
 import operator
 from collections import OrderedDict
 
+
 def read_and_preprocessing(json_filename, num_attribute, is_lower_case,
-    is_stem,is_remove_stopwords, is_remove_puctuation, stemmer, customized_stopwords):
+    is_stem,is_remove_stopwords, is_remove_puctuation,
+    stemmer, customized_stopwords):
+    '''
+    This function is used to preprocessing json data and only 
+    remain ingredients
+    inputs:
+        jason_filename: data
+        num_attribute: set to 11 at the end to include recipe
+            w/ 11 attributes (title, ingredients, etc.)
+        is_lower_case: flag, logical
+        is_stem,is_remove_stopwords: flag, logical
+        is_remove_puctuation: flag, logical
+        stemmer: an object for stemming, returned from PorterStemmer,
+            which is a function in nltk.stem.Porter
+        customized_stopwords: special stopwords
+    outputs:
+        index_in_json: index information
+        documents: preprocessed recipe ingredients
+        word_set: contain all vocabulary
+    '''
+
     data = json.load(open(json_filename))
     documents = []
     index_in_json = []
@@ -27,7 +51,7 @@ def read_and_preprocessing(json_filename, num_attribute, is_lower_case,
     for i in range(0, len(data)):
         if len(data[i]) == num_attribute and len(data[i]['ingredients']) != 0:
             if data[i]['title'] not in title_set:
-                
+
                 title_set.add(data[i]['title'])
                 index_in_json.append(i)
                 ingredients = data[i]['ingredients']
@@ -66,7 +90,17 @@ def read_and_preprocessing(json_filename, num_attribute, is_lower_case,
 
     return index_in_json, documents, word_set
 
+
 def generate_inverted_index(index_in_json, documents, word_set):
+    '''
+    This function is used to generate interted index for efficiency
+    inputs:
+        index_in_json: index information
+        documents: preprocessed recipe ingredients
+        word_set: contain all vocabulary
+    outputs:
+        inverted_index: matrix. Contain information about each word
+    '''
 
     N = len(documents)
     num_word = len(word_set)
@@ -80,11 +114,24 @@ def generate_inverted_index(index_in_json, documents, word_set):
             index = index_in_json[i]
             document = documents[i]
             if each_word in document:
-                inverted_index[each_word][0] = inverted_index[each_word][0] + 1
-                inverted_index[each_word].append((i, document.count(each_word)))
+                inverted_index[each_word][0] = \
+                    inverted_index[each_word][0] + 1
+                inverted_index[each_word].append((i,
+                    document.count(each_word)))
     return inverted_index
 
+
 def get_document_length(index_in_json, documents, inverted_index):
+    '''
+    This function is used to calculate length of each document
+    inputs:
+        index_in_json: index information
+        documents: preprocessed recipe ingredients
+        inverted_index: matrix. Contain information about each word
+    outputs:
+        doc_length: vector. length of each document
+    '''
+
     doc_length = []
     for i in range(0, len(documents)):
         document = documents[i]
@@ -97,7 +144,21 @@ def get_document_length(index_in_json, documents, inverted_index):
     return doc_length
 
 
-def doc_ranking(k1, b, query, index_in_json, documents, inverted_index, doc_length):
+def doc_ranking(k1, b, query, index_in_json, documents,
+    inverted_index, doc_length):
+    '''
+    This function is used to rank document with BM25 model.
+    inputs:
+        k1, b: parameters for BM25
+        query: given ingredients
+        index_in_json: index information
+        documents: preprocessed recipe ingredients
+        inverted_index: matrix. Contain information about each word
+        doc_length: vector. length of each document
+    outputs:
+        doc_rank: documents ordered by score
+    '''
+
     #preprocessing query
     N = len(documents)
     query_set = set()
@@ -107,7 +168,8 @@ def doc_ranking(k1, b, query, index_in_json, documents, inverted_index, doc_leng
     if is_stem:
         singles = [stemmer.stem(token) for token in tokens]
     if is_remove_stopwords:
-        filtered_words = [word for word in singles if word not in stopwords.words('english')]
+        filtered_words = [word for word in singles \
+            if word not in stopwords.words('english')]
     else:
         filtered_words = singles
     filtered_words_2 = []
@@ -132,16 +194,31 @@ def doc_ranking(k1, b, query, index_in_json, documents, inverted_index, doc_leng
                 document_count = inverted_index[each_word][i][1]
                 tf_doc = float(document_count)
                 df_doc = inverted_index[each_word][0]
-                # doc_word_weight = tf_doc * idf_doc
                 part_1 = (N - df_doc + 0.5) / float(df_doc + 0.5)
-                part_2 = ((k1 + 1) * tf_doc) / (tf_doc + k1 * (1 - b + b * (len(documents[document_index]) / average_length)))
-                # part_3 = ((k3 + 1) * tf_doc) / (k3 + tf_doc)
+                part_2 = ((k1 + 1) * tf_doc) / \
+                    (tf_doc + k1 * (1 - b + b * \
+                        (len(documents[document_index]) / average_length)))
+
                 if document_index not in doc_rank:
                     doc_rank[document_index] = 0.0
-                doc_rank[document_index] = doc_rank[document_index] + math.log(part_1 * part_2)
+
+                doc_rank[document_index] = \
+                    doc_rank[document_index] + math.log(part_1 * part_2)
     return doc_rank
 
+
 def delete_food(sorted_doc_rank, documents, without_food):
+    '''
+    This function is used to delete the ingredients that
+        you do not want to be included in your recipe
+    inputs:
+        sorted_doc_rank: documents ordered by score
+        documents: original documnets
+        without_food: what ingredients you do not want
+    outputs:
+        filtered_doc_index: documents(recipes) ordered by score
+    '''
+
     if len(without_food) == 0:
         filtered_doc_index = []
         for ele in sorted_doc_rank:
@@ -155,7 +232,8 @@ def delete_food(sorted_doc_rank, documents, without_food):
         if is_stem:
             singles = [stemmer.stem(token) for token in tokens]
         if is_remove_stopwords:
-            filtered_words = [word for word in singles if word not in stopwords.words('english')]
+            filtered_words = [word for word in singles \
+                if word not in stopwords.words('english')]
         else:
             filtered_words = singles
         filtered_words_2 = []
@@ -179,8 +257,19 @@ def delete_food(sorted_doc_rank, documents, without_food):
     return filtered_doc_index
 
 
-
 def get_data(json_filename, top_n, doc_index, documents):
+    '''
+    This function is used to retrieve the whole recipe from json file.
+    inputs:
+        jason_filename: data
+        top_n: how many recipes you want
+        doc_index: index information
+        documents: preprocessed recipe ingredients
+    outputs:
+        s: vector saves recipes info
+    '''
+
+
     data = json.load(open(json_filename))
     s=[]
     for i in range(0, top_n):
@@ -200,15 +289,30 @@ def get_data(json_filename, top_n, doc_index, documents):
     return s
 
 
-
 def save_func(filename, data):
+    '''
+    This function is used to save tmp data
+    inputs:
+        filename: string
+        data: what data you want to save
+    '''
+
     with open(filename, "wb") as fp1:
         pickle.dump(data, fp1)
 
+
 def load_func(filename):
+    '''
+    This unction is used to load tmp data
+    inputs:
+        filename: string
+        data: what data you want to load
+    '''
+
     with open(filename, "rb") as fp1:
         data = pickle.load(fp1)
     return data
+
 
 stemmer = PorterStemmer()
 is_lower_case = True
@@ -224,8 +328,9 @@ num_attribute = 11
 json_filename = 'full_format_recipes.json'
 name_doc_length = 'doc_length_BM25'
 
-k1 = 1.2
-b = 0.75
+
+k1 = 1.1
+b = 0.99
 customized_stopwords = {"spoon", "cups", "large",
     "teaspoon", "medium", "small", "Freshly", "sheets", "pound",
     "tablespoon", "ounce", "lb"}
@@ -237,15 +342,35 @@ load_word_set = load_func(name_word_set)
 load_inverted_index = load_func(name_inverted_index)
 load_doc_length = load_func(name_doc_length)
 
-def find_recipe(json_filename, query, top_n, without_food, load_index_in_json, load_documents, load_inverted_index, load_doc_length):
-    doc_rank = doc_ranking(k1, b, query, load_index_in_json, load_documents, load_inverted_index, load_doc_length)
-    sorted_doc_rank = sorted(doc_rank.items(), key=operator.itemgetter(1), reverse=True)
+
+def find_recipe(json_filename, query, top_n, without_food,
+    load_index_in_json, load_documents, load_inverted_index, load_doc_length):
+    '''
+    Main Function is used to find recipe we want.
+    inputs:
+        jason_filename: data
+        query: given ingredients
+        top_n: how many recipes you want us to return
+        without_food: what ingredients you do not want to include
+        load_index_in_json: tmp index file
+        load_documents: tmp documnets file
+        load_inverted_index: saved inverted_index file
+        load_doc_length: saved doc length file
+    outputs:
+        dt: recipes information we want
+    '''
+
+    doc_rank = doc_ranking(k1, b, query, load_index_in_json,
+        load_documents, load_inverted_index, load_doc_length)
+    sorted_doc_rank = sorted(doc_rank.items(),
+        key=operator.itemgetter(1), reverse=True)
     data = json.load(open(json_filename))
     for i in range(0, top_n):
         index = load_index_in_json[sorted_doc_rank[i][0]]
-    
-    filtered_doc_index = delete_food(sorted_doc_rank, load_documents, without_food)
-    
+
+    filtered_doc_index = delete_food(sorted_doc_rank,
+        load_documents, without_food)
+
     dt = get_data(json_filename, top_n, filtered_doc_index, load_documents)
 
     return dt
