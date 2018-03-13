@@ -1,3 +1,5 @@
+# Modified to add installed apps
+
 """
 Django settings for cookbook project.
 
