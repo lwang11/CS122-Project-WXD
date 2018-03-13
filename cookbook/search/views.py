@@ -26,7 +26,9 @@ class SearchForm(forms.Form):
         help_text='e.g. eggs',
         required=True)
 
-    num = forms.IntegerField(label='Number of recipes', help_text='e.g. 1-10', min_value=1, max_value=10)
+    num = forms.IntegerField(label='Number of recipes', 
+                             help_text='e.g. 1-10', 
+                             min_value=1, max_value=10)
     
     without_food = forms.CharField(label='Unwanted Food (Optional)', 
                                    help_text='e.g. onion', 
@@ -53,8 +55,9 @@ def home(request):
             without = form.cleaned_data['without_food']
             num_char = form.cleaned_data['num']
 
-            result = find_recipe('full_format_recipes.json', food_query, num_char, without,
-                                 load_index_in_json, load_documents, load_inverted_index, load_doc_length)
+            result = find_recipe('full_format_recipes.json', food_query, 
+                                 num_char, without, load_index_in_json, 
+                                 load_documents, load_inverted_index, load_doc_length)
 
             res = []
             for i in result:
@@ -65,10 +68,9 @@ def home(request):
     else:
         form = SearchForm()
     
-    return render(request, 'search/index.html', {'form': form,"result": result, "food_query": food_query, 
+    return render(request, 'search/index.html', {'form': form,"result": result, 
+                                                 "food_query": food_query, 
                                                  'res': res, 'num_char': num_char})
-
-
 
 
 
